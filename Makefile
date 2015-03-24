@@ -153,7 +153,7 @@ destroy:
 create: 
 	@ if [ -a ./clusterid ]; then echo "clusterid exists! exiting"; exit 1; fi
 	@ echo creating EMR cluster
-	${AWS} --output text  emr  create-cluster --ami-version 3.5.0 --instance-groups ${INSTANCE_GROUPS} --no-auto-terminate --name NutchCrawler --ec2-attributes ${EC2_ATTRIBUTES} --steps ${STEPS} --log-uri "s3://${S3_BUCKET}/logs" | head -1 > ./clusterid
+	${AWS} --output text  emr  create-cluster --ami-version 3.5.0 --instance-groups ${INSTANCE_GROUPS} --auto-terminate --name NutchCrawler --ec2-attributes ${EC2_ATTRIBUTES} --steps ${STEPS} --log-uri "s3://${S3_BUCKET}/logs" | head -1 > ./clusterid
 
 #
 # load the nutch jar and seed files to s3

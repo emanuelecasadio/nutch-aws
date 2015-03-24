@@ -67,9 +67,9 @@ This make target will do these:
   1. copy the crawldb, linkdb, and merged segments folders from hdfs://users/hadoop/crawl to s3://S3_BUCKET/crawl
 1. copy the logs to s3://S3_BUCKET/logs
 
-The content of ./jobflowid file shoulfd be a jobflow id (e.g. j-IR4OQTH2HE7Z )if everything went well. 
+The content of ./clusterid file shoulfd be a cluster id (e.g. j-IR4OQTH2HE7Z )if everything went well. 
 
-Note: the cluster is launched with "keep_job_flow_alive_when_no_steps" set to false which means it will be destroyed after the steps are completed. 
+Note: the cluster is launched with "auto-terminate" set to false which means it will be destroyed after the steps are completed. 
 
 ## Checking the master node
 
