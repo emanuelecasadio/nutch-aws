@@ -24,15 +24,16 @@ The first step to get one machine set up with the basic tools and configuration.
 
 		ACCESS_KEY_ID = 					## YOUR ACCESS KEY ID
 		SECRET_ACCESS_KEY = 				## YOUR ACCESS KEY SECRET
-		AWS_REGION = us-east-1				## CHANGE IT IF YOU WANT 
-		EC2_KEY_NAME = 						## YOUR ACCESS KEY NAME
-		KEYPATH	= ${HOME}/${EC2_KEY_NAME}.pem ## YOUR ACCESS KEY  FILE (IF IT"S DIFFERENT THAN ${HOME}/${EC2_KEY_NAME}.pem)
+		EC2_KEY_NAME = 						## YOUR EC2 KEYPAIR NAME
+		KEYPATH =							## YOUR PRIVATE KEY FILE
+		SUBNET_ID = 						## THE SUBNET THAT WILL HOST YOUR EC2 INSTANCES
+		AWS_REGION = 						## YOUR AWS REGION
 		S3_BUCKET = 						## THE S3 BUCKET WHERE FILES WILL BE READ FROM AND WRITTEN TO
-		CLUSTERSIZE	= 3						## NUMBER OF MACHINES IN THE CLUSTER
+		CLUSTERSIZE	= 3						## NUMBER OF SECONDARY MACHINES IN THE CLUSTER
 		DEPTH = 3							## HOW MANY LINK HOPS WILL THE CRAWLER GO
 		TOPN = 5							## HOW MANY OUTLINKS WILL BE FOLLOWED
-		MASTER_INSTANCE_TYPE = m1.small 
-		SLAVE_INSTANCE_TYPE = m1.small
+		MASTER_INSTANCE_TYPE = m1.medium
+		SLAVE_INSTANCE_TYPE = m1.medium
 
 1. Checking the configuration:
 
@@ -61,9 +62,9 @@ This make target will do these:
 
 This make target will do these:
 1. start a emr cluster and run theese mr jobs:
-	1. run the Nutch [crawl](http://wiki.apache.org/nutch/Crawl) job
-	1. run the Nutch [mergesegs](http://wiki.apache.org/nutch/bin/nutch_mergesegs) job
-	1. copy the crawldb, linkdb, and merged segments folders from hdfs://users/hadoop/crawl to s3://S3_BUCKET/crawl
+  1. run the Nutch [crawl](http://wiki.apache.org/nutch/Crawl) job
+  1. run the Nutch [mergesegs](http://wiki.apache.org/nutch/bin/nutch_mergesegs) job
+  1. copy the crawldb, linkdb, and merged segments folders from hdfs://users/hadoop/crawl to s3://S3_BUCKET/crawl
 1. copy the logs to s3://S3_BUCKET/logs
 
 The content of ./jobflowid file shoulfd be a jobflow id (e.g. j-IR4OQTH2HE7Z )if everything went well. 
