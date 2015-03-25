@@ -71,13 +71,13 @@ INSTANCE_GROUPS = '[  \
     "InstanceCount": 1,  \
     "Name": "NutchCrawlerMaster",  \
     "InstanceGroupType": "MASTER",  \
-    "InstanceType": "m1.medium"  \
+    "InstanceType": "${MASTER_INSTANCE_TYPE}"  \
   },  \
   {  \
     "InstanceCount": ${CLUSTERSIZE},  \
     "Name": "NutchCrawlerCore",  \
     "InstanceGroupType": "CORE",  \
-    "InstanceType": "m1.medium"  \
+    "InstanceType": "${SLAVE_INSTANCE_TYPE}"  \
   }  \
 ]'
 
@@ -105,23 +105,23 @@ STEPS = '[  \
   },  \
   {  \
     "Name": "copy-crawldb",  \
-    "Args": ["--src,hdfs:///user/hadoop/crawl/crawldb","--dest,s3://${S3_BUCKET}/crawl/crawldb","--srcPattern,.*","--outputCodec","snappy"], \
-    "Jar": "s3://elasticmapreduce/libs/s3distcp/role/s3distcp.jar", \
-    "ActionOnFailure": "CANCEL_AND_WAIT",  \
+    "Args": ["--src","hdfs:///user/hadoop/crawl/crawldb","--dest","s3://${S3_BUCKET}/crawl/crawldb","--srcPattern",".*","--outputCodec","snappy"], \
+    "Jar": "/home/hadoop/lib/emr-s3distcp-1.0.jar", \
+    "ActionOnFailure": "TERMINATE_CLUSTER",  \
     "Type": "CUSTOM_JAR"  \
   },  \
   {  \
     "Name": "copy-linkdb",  \
-    "Args": ["--src,hdfs:///user/hadoop/crawl/linkdb","--dest,s3://${S3_BUCKET}/crawl/linkdb","--srcPattern,.*","--outputCodec","snappy"], \
-    "Jar": "s3://elasticmapreduce/libs/s3distcp/role/s3distcp.jar", \
-    "ActionOnFailure": "CANCEL_AND_WAIT",  \
+    "Args": ["--src","hdfs:///user/hadoop/crawl/linkdb","--dest","s3://${S3_BUCKET}/crawl/linkdb","--srcPattern",".*","--outputCodec","snappy"], \
+    "Jar": "/home/hadoop/lib/emr-s3distcp-1.0.jar", \
+    "ActionOnFailure": "TERMINATE_CLUSTER",  \
     "Type": "CUSTOM_JAR"  \
   },  \
   {  \
     "Name": "copy-segments",  \
-    "Args": ["--src,hdfs:///user/hadoop/crawl/mergedsegments","--dest,s3://${S3_BUCKET}/crawl/segments","--srcPattern,.*","--outputCodec","snappy"], \
-    "Jar": "s3://elasticmapreduce/libs/s3distcp/role/s3distcp.jar", \
-    "ActionOnFailure": "CANCEL_AND_WAIT",  \
+    "Args": ["--src","hdfs:///user/hadoop/crawl/mergedsegments","--dest","s3://${S3_BUCKET}/crawl/segments","--srcPattern",".*","--outputCodec","snappy"], \
+    "Jar": "/home/hadoop/lib/emr-s3distcp-1.0.jar", \
+    "ActionOnFailure": "TERMINATE_CLUSTER",  \
     "Type": "CUSTOM_JAR"  \
   }  \
 ]'
