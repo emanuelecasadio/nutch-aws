@@ -27,8 +27,8 @@ SUBNET_ID =
 AWS_REGION = 
 S3_BUCKET = 
 
-# Number of the secondary machines (there is always a master)
-CLUSTERSIZE = 3
+# Number of the secondary machines (in addition, there is always a master)
+CLUSTERSIZE = 1
 
 DEPTH = 5
 TOPN = 5
@@ -74,7 +74,7 @@ INSTANCE_GROUPS = '[  \
     "InstanceType": "m1.medium"  \
   },  \
   {  \
-    "InstanceCount": 1,  \
+    "InstanceCount": ${CLUSTERSIZE},  \
     "Name": "NutchCrawlerCore",  \
     "InstanceGroupType": "CORE",  \
     "InstanceType": "m1.medium"  \
@@ -88,7 +88,7 @@ EC2_ATTRIBUTES = '{  \
 
 STEPS = '[  \
   {  \
-    "Name": "nutch-crawl",  \
+    "Name": "crawl",  \
     "Args": ["s3://${S3_BUCKET}/urls", "-dir", "crawl", "-depth", "${DEPTH}", "-topN", "${TOPN}"], \
     "Jar": "s3://${S3_BUCKET}/lib/apache-nutch-1.6.job.jar", \
     "ActionOnFailure": "TERMINATE_CLUSTER",  \
@@ -96,7 +96,7 @@ STEPS = '[  \
     "Type": "CUSTOM_JAR"  \
   },  \
   {  \
-    "Name": "nutch-crawl",  \
+    "Name": "merge-segments",  \
     "Args": ["crawl/mergedsegments", "-dir", "crawl/segments"], \
     "Jar": "s3://${S3_BUCKET}/lib/apache-nutch-1.6.job.jar", \
     "ActionOnFailure": "TERMINATE_CLUSTER",  \
@@ -104,24 +104,24 @@ STEPS = '[  \
     "Type": "CUSTOM_JAR"  \
   },  \
   {  \
-    "Name": "crawlData2S3",  \
-    "Args": ["--src","hdfs:///user/hadoop/crawl/crawldb","--dest","s3://${S3_BUCKET}/crawl/crawldb","--srcPattern",".*","--outputCodec","snappy"], \
+    "Name": "copy-crawldb",  \
+    "Args": ["--src,hdfs:///user/hadoop/crawl/crawldb","--dest,s3://${S3_BUCKET}/crawl/crawldb","--srcPattern,.*","--outputCodec","snappy"], \
     "Jar": "s3://elasticmapreduce/libs/s3distcp/role/s3distcp.jar", \
-    "ActionOnFailure": "TERMINATE_CLUSTER",  \
+    "ActionOnFailure": "CANCEL_AND_WAIT",  \
     "Type": "CUSTOM_JAR"  \
   },  \
   {  \
-    "Name": "crawlData2S3",  \
-    "Args": ["--src","hdfs:///user/hadoop/crawl/linkdb","--dest","s3://${S3_BUCKET}/crawl/linkdb","--srcPattern",".*","--outputCodec","snappy"], \
+    "Name": "copy-linkdb",  \
+    "Args": ["--src,hdfs:///user/hadoop/crawl/linkdb","--dest,s3://${S3_BUCKET}/crawl/linkdb","--srcPattern,.*","--outputCodec","snappy"], \
     "Jar": "s3://elasticmapreduce/libs/s3distcp/role/s3distcp.jar", \
-    "ActionOnFailure": "TERMINATE_CLUSTER",  \
+    "ActionOnFailure": "CANCEL_AND_WAIT",  \
     "Type": "CUSTOM_JAR"  \
   },  \
   {  \
-    "Name": "crawlData2S3",  \
-    "Args": ["--src","hdfs:///user/hadoop/crawl/mergedsegments","--dest","s3://${S3_BUCKET}/crawl/segments","--srcPattern",".*","--outputCodec","snappy"], \
+    "Name": "copy-segments",  \
+    "Args": ["--src,hdfs:///user/hadoop/crawl/mergedsegments","--dest,s3://${S3_BUCKET}/crawl/segments","--srcPattern,.*","--outputCodec","snappy"], \
     "Jar": "s3://elasticmapreduce/libs/s3distcp/role/s3distcp.jar", \
-    "ActionOnFailure": "TERMINATE_CLUSTER",  \
+    "ActionOnFailure": "CANCEL_AND_WAIT",  \
     "Type": "CUSTOM_JAR"  \
   }  \
 ]'
